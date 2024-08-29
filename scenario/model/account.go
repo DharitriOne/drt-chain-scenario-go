@@ -16,7 +16,7 @@ type Account struct {
 	CodeMetadata    JSONBytesFromString
 	Owner           JSONBytesFromString
 	AsyncCallData   string
-	DCTData         []*DCTData
+	DCDTData        []*DCDTData
 	Update          bool
 	DeveloperReward JSONBigInt
 }
@@ -29,23 +29,23 @@ type StorageKeyValuePair struct {
 
 // CheckAccount is a json object representing checks for an account.
 type CheckAccount struct {
-	Address              JSONBytesFromString
-	Comment              string
-	Nonce                JSONCheckUint64
-	Balance              JSONCheckBigInt
-	Username             JSONCheckBytes
-	ExplicitStorage      bool
-	IgnoreStorage        bool
-	MoreStorageAllowed   bool
-	CheckStorage         []*CheckStorageKeyValuePair
-	Code                 JSONCheckBytes
-	CodeMetadata         JSONCheckBytes
-	Owner                JSONCheckBytes
-	AsyncCallData        JSONCheckBytes
-	CheckDCTData         []*CheckDCTData
-	IgnoreDCT            bool
-	MoreDCTTokensAllowed bool
-	DeveloperReward      JSONCheckBigInt
+	Address               JSONBytesFromString
+	Comment               string
+	Nonce                 JSONCheckUint64
+	Balance               JSONCheckBigInt
+	Username              JSONCheckBytes
+	ExplicitStorage       bool
+	IgnoreStorage         bool
+	MoreStorageAllowed    bool
+	CheckStorage          []*CheckStorageKeyValuePair
+	Code                  JSONCheckBytes
+	CodeMetadata          JSONCheckBytes
+	Owner                 JSONCheckBytes
+	AsyncCallData         JSONCheckBytes
+	CheckDCDTData         []*CheckDCDTData
+	IgnoreDCDT            bool
+	MoreDCDTTokensAllowed bool
+	DeveloperReward       JSONCheckBigInt
 }
 
 // CheckStorageKeyValuePair checks a single entry in storage.

@@ -6,7 +6,7 @@ import (
 
 	scenio "github.com/DharitriOne/drt-chain-scenario-go/scenario/io"
 	scenmodel "github.com/DharitriOne/drt-chain-scenario-go/scenario/model"
-	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dctconvert"
+	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dcdtconvert"
 )
 
 var errFirstStepMustSetState = errors.New("first step must be of type SetState")
@@ -112,7 +112,7 @@ func getAccountsAndTransactionsFromSteps(steps []scenmodel.Step) (stateAndBenchm
 						arguments,
 						step.Tx.Nonce.Value,
 						step.Tx.REWAValue.Value,
-						step.Tx.DCTValue,
+						step.Tx.DCDTValue,
 						step.Tx.From.Value,
 						append(ScAddressPrefix, step.Tx.To.Value[ScAddressPrefixLength:]...),
 						step.Tx.GasLimit.Value,
@@ -198,7 +198,7 @@ func convertScenariosAccountToTestAccount(scenAcc *scenmodel.Account) (*TestAcco
 		key := string(stkvp.Key.Value)
 		storage[key] = stkvp.Value.Value
 	}
-	_ = dctconvert.WriteScenariosDCTToStorage(scenAcc.DCTData, storage)
+	_ = dcdtconvert.WriteScenariosDCDTToStorage(scenAcc.DCDTData, storage)
 	account := SetNewAccount(scenAcc.Nonce.Value, scenAcc.Address.Value, scenAcc.Balance.Value, storage, scenAcc.Code.Value, scenAcc.Owner.Value)
 
 	if len(account.code) != 0 && len(account.ownerAddress) == 0 {

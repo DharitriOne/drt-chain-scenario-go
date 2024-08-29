@@ -1,14 +1,14 @@
 package scenmodel
 
-// DCTTxData models the transfer of tokens in a tx
-type DCTTxData struct {
+// DCDTTxData models the transfer of tokens in a tx
+type DCDTTxData struct {
 	TokenIdentifier JSONBytesFromString
 	Nonce           JSONUint64
 	Value           JSONBigInt
 }
 
-// DCTInstance models an instance of an NFT/SFT, with its own nonce
-type DCTInstance struct {
+// DCDTInstance models an instance of an NFT/SFT, with its own nonce
+type DCDTInstance struct {
 	Nonce      JSONUint64
 	Balance    JSONBigInt
 	Creator    JSONBytesFromString
@@ -18,17 +18,17 @@ type DCTInstance struct {
 	Attributes JSONBytesFromTree
 }
 
-// DCTData models an account holding an DCT token
-type DCTData struct {
+// DCDTData models an account holding an DCDT token
+type DCDTData struct {
 	TokenIdentifier JSONBytesFromString
-	Instances       []*DCTInstance
+	Instances       []*DCDTInstance
 	LastNonce       JSONUint64
 	Roles           []string
 	Frozen          JSONUint64
 }
 
-// CheckDCTInstance checks an instance of an NFT/SFT, with its own nonce
-type CheckDCTInstance struct {
+// CheckDCDTInstance checks an instance of an NFT/SFT, with its own nonce
+type CheckDCDTInstance struct {
 	Nonce      JSONUint64
 	Balance    JSONCheckBigInt
 	Creator    JSONCheckBytes
@@ -38,9 +38,9 @@ type CheckDCTInstance struct {
 	Attributes JSONCheckBytes
 }
 
-// NewCheckDCTInstance creates an instance with all fields unspecified.
-func NewCheckDCTInstance() *CheckDCTInstance {
-	return &CheckDCTInstance{
+// NewCheckDCDTInstance creates an instance with all fields unspecified.
+func NewCheckDCDTInstance() *CheckDCDTInstance {
+	return &CheckDCDTInstance{
 		Nonce:      JSONUint64Zero(),
 		Balance:    JSONCheckBigIntUnspecified(),
 		Creator:    JSONCheckBytesUnspecified(),
@@ -51,10 +51,10 @@ func NewCheckDCTInstance() *CheckDCTInstance {
 	}
 }
 
-// CheckDCTData checks the DCT tokens held by an account
-type CheckDCTData struct {
+// CheckDCDTData checks the DCDT tokens held by an account
+type CheckDCDTData struct {
 	TokenIdentifier JSONBytesFromString
-	Instances       []*CheckDCTInstance
+	Instances       []*CheckDCDTInstance
 	LastNonce       JSONCheckUint64
 	Roles           []string
 	Frozen          JSONCheckUint64

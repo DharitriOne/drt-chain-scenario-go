@@ -7,7 +7,7 @@ import (
 
 	scenmodel "github.com/DharitriOne/drt-chain-scenario-go/scenario/model"
 	worldmock "github.com/DharitriOne/drt-chain-scenario-go/worldmock"
-	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dctconvert"
+	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dcdtconvert"
 )
 
 // DefaultCodeMetadata indicates what code metadata to use in smart contracts if unspecified
@@ -116,7 +116,7 @@ func convertAccount(testAcct *scenmodel.Account, world *worldmock.MockWorld) (*w
 		storage[key] = stkvp.Value.Value
 	}
 
-	err := dctconvert.WriteScenariosDCTToStorage(testAcct.DCTData, storage)
+	err := dcdtconvert.WriteScenariosDCDTToStorage(testAcct.DCDTData, storage)
 	if err != nil {
 		return nil, err
 	}

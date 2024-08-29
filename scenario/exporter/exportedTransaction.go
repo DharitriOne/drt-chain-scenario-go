@@ -21,7 +21,7 @@ type Transaction struct {
 	deployData []byte
 	nonce      uint64
 	value      *big.Int
-	dctValue   []*scenmodel.DCTTxData
+	dcdtValue  []*scenmodel.DCDTTxData
 	sndAddr    []byte
 	rcvAddr    []byte
 	gasPrice   uint64
@@ -33,7 +33,7 @@ func NewTransaction() *Transaction {
 	return &Transaction{
 		args:       make([][]byte, 0),
 		value:      big.NewInt(0),
-		dctValue:   make([]*scenmodel.DCTTxData, 0),
+		dcdtValue:  make([]*scenmodel.DCDTTxData, 0),
 		sndAddr:    make([]byte, 0),
 		rcvAddr:    make([]byte, 0),
 		deployData: make([]byte, 0),
@@ -62,15 +62,15 @@ func (tx *Transaction) GetCallValue() *big.Int {
 	return tx.value
 }
 
-// WithDCTTransfers sets the DCT transafers
-func (tx *Transaction) WithDCTTransfers(dctTransfers []*scenmodel.DCTTxData) *Transaction {
-	tx.dctValue = append(tx.dctValue, dctTransfers...)
+// WithDCDTTransfers sets the DCDT transafers
+func (tx *Transaction) WithDCDTTransfers(dcdtTransfers []*scenmodel.DCDTTxData) *Transaction {
+	tx.dcdtValue = append(tx.dcdtValue, dcdtTransfers...)
 	return tx
 }
 
-// GetDCTTransfers gets the DCT transfers
-func (tx *Transaction) GetDCTTransfers() []*scenmodel.DCTTxData {
-	return tx.dctValue
+// GetDCDTTransfers gets the DCDT transfers
+func (tx *Transaction) GetDCDTTransfers() []*scenmodel.DCDTTxData {
+	return tx.dcdtValue
 }
 
 // WithCallFunction sets the call function
@@ -162,7 +162,7 @@ func CreateTransaction(
 	args [][]byte,
 	nonce uint64,
 	value *big.Int,
-	dctTransfers []*scenmodel.DCTTxData,
+	dcdtTransfers []*scenmodel.DCDTTxData,
 	sndAddr []byte,
 	rcvAddr []byte,
 	gasLimit uint64,
@@ -173,7 +173,7 @@ func CreateTransaction(
 		WithCallArguments(args).
 		WithNonce(nonce).
 		WithCallValue(value).
-		WithDCTTransfers(dctTransfers).
+		WithDCDTTransfers(dcdtTransfers).
 		WithSenderAddress(sndAddr).
 		WithReceiverAddress(rcvAddr).
 		WithGasLimitAndPrice(gasLimit, gasPrice)

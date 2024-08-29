@@ -8,9 +8,9 @@ import (
 // Parser performs parsing of both json tests (older) and scenarios (new).
 type Parser struct {
 	ExprInterpreter                  ei.ExprInterpreter
-	AllowDctTxLegacySyntax           bool
-	AllowDctLegacySetSyntax          bool
-	AllowDctLegacyCheckSyntax        bool
+	AllowDcdtTxLegacySyntax          bool
+	AllowDcdtLegacySetSyntax         bool
+	AllowDcdtLegacyCheckSyntax       bool
 	AllowSingleValueInCheckValueList bool
 }
 
@@ -21,9 +21,9 @@ func NewParser(fileResolver fr.FileResolver, vmType []byte) Parser {
 			FileResolver: fileResolver,
 			VMType:       vmType,
 		},
-		AllowDctTxLegacySyntax:           true,
-		AllowDctLegacySetSyntax:          true,
-		AllowDctLegacyCheckSyntax:        true,
+		AllowDcdtTxLegacySyntax:          true,
+		AllowDcdtLegacySetSyntax:         true,
+		AllowDcdtLegacyCheckSyntax:       true,
 		AllowSingleValueInCheckValueList: true,
 	}
 }

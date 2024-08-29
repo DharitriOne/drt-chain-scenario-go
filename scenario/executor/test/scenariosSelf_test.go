@@ -8,9 +8,9 @@ import (
 func TestScenariosSelfTest(t *testing.T) {
 	ScenariosTest(t).
 		Folder("scenarios-self-test").
-		Exclude("scenarios-self-test/builtin-func-dct-transfer.scen.json").
-		Exclude("scenarios-self-test/dct-zero-balance-check-err.scen.json").
-		Exclude("scenarios-self-test/dct-non-zero-balance-check-err.scen.json").
+		Exclude("scenarios-self-test/builtin-func-dcdt-transfer.scen.json").
+		Exclude("scenarios-self-test/dcdt-zero-balance-check-err.scen.json").
+		Exclude("scenarios-self-test/dcdt-non-zero-balance-check-err.scen.json").
 		Run().
 		CheckNoError()
 }
@@ -173,10 +173,10 @@ func TestScenariosCheckStorageErr5(t *testing.T) {
 				"  for key 0x6b65792d62 (str:key-b): Want: \"str:another-b\". Have: \"0x76616c75652d62 (str:value-b)\"")
 }
 
-func TestScenariosCheckDCTErr1(t *testing.T) {
+func TestScenariosCheckDCDTErr1(t *testing.T) {
 	ScenariosTest(t).
 		Folder("scenarios-self-test/set-check").
-		File("set-check-dct.err1.json").
+		File("set-check-dcdt.err1.json").
 		Run().
 		RequireError(
 			`Check state "check-1": mismatch for account "address:the-address":
@@ -188,20 +188,20 @@ func TestScenariosCheckDCTErr1(t *testing.T) {
   for token: NFT-123456, nonce: 1: Bad attributes. Want: "0x227374723a6f746865725f6174747269627574657322 ("str:other_attributes")". Have: "0x73657269616c697a65645f61747472696275746573 (str:serialized_attributes)"`)
 }
 
-func TestScenariosDctZeroBalance(t *testing.T) {
+func TestScenariosDcdtZeroBalance(t *testing.T) {
 	ScenariosTest(t).
 		Folder("scenarios-self-test").
-		File("dct-zero-balance-check-err.scen.json").
+		File("dcdt-zero-balance-check-err.scen.json").
 		Run().
 		RequireError(
 			`Check state "check-1": mismatch for account "address:A":
   for token: TOK-123456, nonce: 0: Bad balance. Want: "". Have: "150"`)
 }
 
-func TestScenariosDctNonZeroBalance(t *testing.T) {
+func TestScenariosDcdtNonZeroBalance(t *testing.T) {
 	ScenariosTest(t).
 		Folder("scenarios-self-test").
-		File("dct-non-zero-balance-check-err.scen.json").
+		File("dcdt-non-zero-balance-check-err.scen.json").
 		Run().
 		RequireError(
 			`Check state "check-1": mismatch for account "address:B":

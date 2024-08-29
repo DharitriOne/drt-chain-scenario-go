@@ -118,9 +118,9 @@ func transactionToScenarioOJ(tx *scenmodel.Transaction) oj.OJsonObject {
 	if tx.Type.HasValue() && len(tx.REWAValue.Original) > 0 && tx.REWAValue.Original != "0" {
 		transactionOJ.Put("rewaValue", bigIntToOJ(tx.REWAValue))
 	}
-	if len(tx.DCTValue) > 0 {
-		dctItemOJ := dctTxDataToOJ(tx.DCTValue)
-		transactionOJ.Put("dctValue", dctItemOJ)
+	if len(tx.DCDTValue) > 0 {
+		dcdtItemOJ := dcdtTxDataToOJ(tx.DCDTValue)
+		transactionOJ.Put("dcdtValue", dcdtItemOJ)
 	}
 	if tx.Type.HasFunction() {
 		transactionOJ.Put("function", stringToOJ(tx.Function))

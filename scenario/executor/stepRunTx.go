@@ -75,8 +75,8 @@ func (ae *ScenarioExecutor) executeTx(txIndex string, tx *scenmodel.Transaction)
 		}
 
 		gasForExecution = tx.GasLimit.Value
-		if tx.DCTValue != nil {
-			gasRemaining, err := ae.directDCTTransferFromTx(tx)
+		if tx.DCDTValue != nil {
+			gasRemaining, err := ae.directDCDTTransferFromTx(tx)
 			if err != nil {
 				return nil, err
 			}
@@ -232,9 +232,9 @@ func (ae *ScenarioExecutor) scCreate(txIndex string, tx *scenmodel.Transaction, 
 		GasProvided:    gasLimit,
 		OriginalTxHash: txHash,
 		CurrentTxHash:  txHash,
-		DCTTransfers:   make([]*vmcommon.DCTTransfer, 0),
+		DCDTTransfers:  make([]*vmcommon.DCDTTransfer, 0),
 	}
-	addDCTToVMInput(tx.DCTValue, &vmInput)
+	addDCDTToVMInput(tx.DCDTValue, &vmInput)
 	codeMetadata := tx.CodeMetadata.Value
 	if tx.CodeMetadata.Unspecified {
 		codeMetadata = DefaultCodeMetadata
@@ -265,9 +265,9 @@ func (ae *ScenarioExecutor) scCall(txIndex string, tx *scenmodel.Transaction, ga
 		GasProvided:    gasLimit,
 		OriginalTxHash: txHash,
 		CurrentTxHash:  txHash,
-		DCTTransfers:   make([]*vmcommon.DCTTransfer, 0),
+		DCDTTransfers:  make([]*vmcommon.DCDTTransfer, 0),
 	}
-	addDCTToVMInput(tx.DCTValue, &vmInput)
+	addDCDTToVMInput(tx.DCDTValue, &vmInput)
 	input := &vmcommon.ContractCallInput{
 		RecipientAddr: tx.To.Value,
 		Function:      tx.Function,
@@ -277,24 +277,24 @@ func (ae *ScenarioExecutor) scCall(txIndex string, tx *scenmodel.Transaction, ga
 	return ae.vm.RunSmartContractCall(input)
 }
 
-func (ae *ScenarioExecutor) directDCTTransferFromTx(tx *scenmodel.Transaction) (uint64, error) {
-	nrTransfers := len(tx.DCTValue)
+func (ae *ScenarioExecutor) directDCDTTransferFromTx(tx *scenmodel.Transaction) (uint64, error) {
+	nrTransfers := len(tx.DCDTValue)
 
 	if nrTransfers == 1 {
-		return ae.World.BuiltinFuncs.PerformDirectDCTTransfer(
+		return ae.World.BuiltinFuncs.PerformDirectDCDTTransfer(
 			tx.From.Value,
 			tx.To.Value,
-			tx.DCTValue[0].TokenIdentifier.Value,
-			tx.DCTValue[0].Nonce.Value,
-			tx.DCTValue[0].Value.Value,
+			tx.DCDTValue[0].TokenIdentifier.Value,
+			tx.DCDTValue[0].Nonce.Value,
+			tx.DCDTValue[0].Value.Value,
 			vm.DirectCall,
 			tx.GasLimit.Value,
 			tx.GasPrice.Value)
 	} else {
-		return ae.World.BuiltinFuncs.PerformDirectMultiDCTTransfer(
+		return ae.World.BuiltinFuncs.PerformDirectMultiDCDTTransfer(
 			tx.From.Value,
 			tx.To.Value,
-			tx.DCTValue,
+			tx.DCDTValue,
 			vm.DirectCall,
 			tx.GasLimit.Value,
 			tx.GasPrice.Value)
@@ -344,20 +344,20 @@ func generateTxHash(txIndex string) []byte {
 	return txIndexBytes
 }
 
-func addDCTToVMInput(dctData []*scenmodel.DCTTxData, vmInput *vmcommon.VMInput) {
-	dctDataLen := len(dctData)
+func addDCDTToVMInput(dcdtData []*scenmodel.DCDTTxData, vmInput *vmcommon.VMInput) {
+	dcdtDataLen := len(dcdtData)
 
-	if dctDataLen > 0 {
-		vmInput.DCTTransfers = make([]*vmcommon.DCTTransfer, dctDataLen)
-		for i := 0; i < dctDataLen; i++ {
-			vmInput.DCTTransfers[i] = &vmcommon.DCTTransfer{}
-			vmInput.DCTTransfers[i].DCTTokenName = dctData[i].TokenIdentifier.Value
-			vmInput.DCTTransfers[i].DCTValue = dctData[i].Value.Value
-			vmInput.DCTTransfers[i].DCTTokenNonce = dctData[i].Nonce.Value
-			if vmInput.DCTTransfers[i].DCTTokenNonce != 0 {
-				vmInput.DCTTransfers[i].DCTTokenType = uint32(core.NonFungible)
+	if dcdtDataLen > 0 {
+		vmInput.DCDTTransfers = make([]*vmcommon.DCDTTransfer, dcdtDataLen)
+		for i := 0; i < dcdtDataLen; i++ {
+			vmInput.DCDTTransfers[i] = &vmcommon.DCDTTransfer{}
+			vmInput.DCDTTransfers[i].DCDTTokenName = dcdtData[i].TokenIdentifier.Value
+			vmInput.DCDTTransfers[i].DCDTValue = dcdtData[i].Value.Value
+			vmInput.DCDTTransfers[i].DCDTTokenNonce = dcdtData[i].Nonce.Value
+			if vmInput.DCDTTransfers[i].DCDTTokenNonce != 0 {
+				vmInput.DCDTTransfers[i].DCDTTokenType = uint32(core.NonFungible)
 			} else {
-				vmInput.DCTTransfers[i].DCTTokenType = uint32(core.Fungible)
+				vmInput.DCDTTransfers[i].DCDTTokenType = uint32(core.Fungible)
 			}
 		}
 	}

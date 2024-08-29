@@ -5,7 +5,7 @@
             "step": "setState",
             "accounts": {
                 "address:the-address": {
-                    "dct": {
+                    "dcdt": {
                         "str:NFT-123456": {
                             "instances": [
                                 {
@@ -53,7 +53,7 @@
             "id": "check-1",
             "accounts": {
                 "address:the-address": {
-                    "dct": {
+                    "dcdt": {
                         "str:NFT-123456": {
                             "instances": [
                                 {
@@ -101,7 +101,7 @@
             "id": "check-2",
             "accounts": {
                 "address:the-address": {
-                    "dct": {
+                    "dcdt": {
                         "str:NFT-123456": {
                             "instances": [
                                 {
@@ -149,7 +149,7 @@
             "id": "check-3",
             "accounts": {
                 "address:the-address": {
-                    "dct": {
+                    "dcdt": {
                         "str:NFT-123456": {
                             "instances": [
                                 {
@@ -177,7 +177,7 @@
             "id": "check-4",
             "accounts": {
                 "address:the-address": {
-                    "dct": {
+                    "dcdt": {
                         "str:NFT-123456": {
                             "instances": [
                                 {

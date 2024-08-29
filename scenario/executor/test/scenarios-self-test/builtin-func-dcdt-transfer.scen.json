@@ -1,15 +1,12 @@
 {
-    "comment": "simple DCT transfer, no SC",
+    "comment": "direct builtin function call",
     "steps": [
         {
             "step": "setState",
             "accounts": {
                 "address:A": {
                     "nonce": "0",
-                    "balance": "0x1000000000",
-                    "dct": {
-                        "str:TOK-123456": "150"
-                    }
+                    "balance": "150"
                 },
                 "address:B": {
                     "nonce": "0",
@@ -18,40 +15,38 @@
             }
         },
         {
-            "step": "transfer",
+            "step": "scCall",
             "id": "1",
             "tx": {
                 "from": "address:A",
                 "to": "address:B",
-                "dctValue": [
-                    {
-                        "tokenIdentifier": "str:TOK-123456",
-                        "value": "100"
-                    }
+                "function": "DCDTTransfer",
+                "arguments": [
+                    "100"
                 ],
-                "gasLimit": "0x100000000",
-                "gasPrice": "0x01"
+                "gasLimit": "50,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "logs": "*",
+                "gas": "*",
+                "refund": "*"
             }
         },
         {
             "step": "checkState",
             "id": "check-1",
-            "comment": "check after tx 1",
             "accounts": {
                 "address:A": {
                     "nonce": "1",
-                    "balance": "0xf00000000",
-                    "dct": {
-                        "str:TOK-123456": "50"
-                    },
+                    "balance": "50",
                     "storage": {},
                     "code": ""
                 },
                 "address:B": {
                     "nonce": "0",
-                    "dct": {
-                        "str:TOK-123456": "100"
-                    },
+                    "balance": "100",
                     "storage": {},
                     "code": ""
                 }
@@ -63,35 +58,22 @@
             "tx": {
                 "from": "address:A",
                 "to": "address:B",
-                "dctValue": [
-                    {
-                        "tokenIdentifier": "str:TOK-123456",
-                        "value": "50"
-                    }
-                ],
-                "gasLimit": "0x100000000",
-                "gasPrice": "0x01"
+                "rewaValue": "50"
             }
         },
         {
             "step": "checkState",
             "id": "check-2",
-            "comment": "check after tx 2",
             "accounts": {
                 "address:A": {
                     "nonce": "2",
-                    "balance": "0xe00000000",
-                    "dct": {
-                        "str:TOK-123456": "0"
-                    },
+                    "balance": "0",
                     "storage": {},
                     "code": ""
                 },
                 "address:B": {
                     "nonce": "0",
-                    "dct": {
-                        "str:TOK-123456": "150"
-                    },
+                    "balance": "150",
                     "storage": {},
                     "code": ""
                 }

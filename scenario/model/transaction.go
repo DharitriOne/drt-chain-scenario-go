@@ -45,8 +45,8 @@ func (tt TransactionType) HasValue() bool {
 	return tt != ScQuery
 }
 
-// HasDCT is a helper function to indicate if transaction has `dctValue` or `dctToken` fields.
-func (tt TransactionType) HasDCT() bool {
+// HasDCDT is a helper function to indicate if transaction has `dcdtValue` or `dcdtToken` fields.
+func (tt TransactionType) HasDCDT() bool {
 	return tt == ScCall || tt == Transfer
 }
 
@@ -70,7 +70,7 @@ type Transaction struct {
 	Type         TransactionType
 	Nonce        JSONUint64
 	REWAValue    JSONBigInt
-	DCTValue     []*DCTTxData
+	DCDTValue    []*DCDTTxData
 	From         JSONBytesFromString
 	To           JSONBytesFromString
 	Function     string

@@ -1,5 +1,5 @@
 {
-    "comment": "DCT multi-transfer, no SC",
+    "comment": "DCDT multi-transfer, no SC",
     "steps": [
         {
             "step": "setState",
@@ -7,7 +7,7 @@
                 "address:A": {
                     "nonce": "0",
                     "balance": "0x1000000000",
-                    "dct": {
+                    "dcdt": {
                         "str:TOK-123456": "150",
                         "str:OTHERTOK-123456": "500",
                         "str:NFT-123456": {
@@ -32,7 +32,7 @@
             "tx": {
                 "from": "address:A",
                 "to": "address:B",
-                "dctValue": [
+                "dcdtValue": [
                     {
                         "tokenIdentifier": "str:TOK-123456",
                         "value": "100"
@@ -59,7 +59,7 @@
                 "address:A": {
                     "nonce": "1",
                     "balance": "0xf00000000",
-                    "dct": {
+                    "dcdt": {
                         "str:TOK-123456": "50",
                         "str:OTHERTOK-123456": "100",
                         "str:NFT-123456": {
@@ -76,7 +76,7 @@
                 },
                 "address:B": {
                     "nonce": "0",
-                    "dct": {
+                    "dcdt": {
                         "str:TOK-123456": "100",
                         "str:OTHERTOK-123456": "400",
                         "str:NFT-123456": {

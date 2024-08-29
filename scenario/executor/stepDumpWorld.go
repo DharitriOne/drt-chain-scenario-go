@@ -10,7 +10,7 @@ import (
 	scenjwrite "github.com/DharitriOne/drt-chain-scenario-go/scenario/json/write"
 	scenmodel "github.com/DharitriOne/drt-chain-scenario-go/scenario/model"
 	worldmock "github.com/DharitriOne/drt-chain-scenario-go/worldmock"
-	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dctconvert"
+	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dcdtconvert"
 
 	"github.com/DharitriOne/drt-chain-core-go/core"
 	vmcommon "github.com/DharitriOne/drt-chain-vm-common-go"
@@ -48,26 +48,26 @@ func (ae *ScenarioExecutor) convertMockAccountToScenarioFormat(account *worldmoc
 	if exists {
 		systemAccStorage = systemAcc.Storage
 	}
-	tokenData, err := dctconvert.GetFullMockDCTData(account.Storage, systemAccStorage)
+	tokenData, err := dcdtconvert.GetFullMockDCDTData(account.Storage, systemAccStorage)
 	if err != nil {
 		return nil, err
 	}
-	var dctNames []string
-	for dctName := range tokenData {
-		dctNames = append(dctNames, dctName)
+	var dcdtNames []string
+	for dcdtName := range tokenData {
+		dcdtNames = append(dcdtNames, dcdtName)
 	}
-	sort.Strings(dctNames)
-	var scenDCT []*scenmodel.DCTData
-	for _, dctName := range dctNames {
-		dctObj := tokenData[dctName]
+	sort.Strings(dcdtNames)
+	var scenDCDT []*scenmodel.DCDTData
+	for _, dcdtName := range dcdtNames {
+		dcdtObj := tokenData[dcdtName]
 
 		var scenRoles []string
-		for _, mockRoles := range dctObj.Roles {
+		for _, mockRoles := range dcdtObj.Roles {
 			scenRoles = append(scenRoles, string(mockRoles))
 		}
 
-		var scenInstances []*scenmodel.DCTInstance
-		for _, mockInstance := range dctObj.Instances {
+		var scenInstances []*scenmodel.DCDTInstance
+		for _, mockInstance := range dcdtObj.Instances {
 			var creator scenmodel.JSONBytesFromString
 			if len(mockInstance.TokenMetaData.Creator) > 0 {
 				creator = scenmodel.JSONBytesFromString{
@@ -108,7 +108,7 @@ func (ae *ScenarioExecutor) convertMockAccountToScenarioFormat(account *worldmoc
 				}
 			}
 
-			scenInstances = append(scenInstances, &scenmodel.DCTInstance{
+			scenInstances = append(scenInstances, &scenmodel.DCDTInstance{
 				Nonce: scenmodel.JSONUint64{
 					Value:    mockInstance.TokenMetaData.Nonce,
 					Original: ae.exprReconstructor.ReconstructFromUint64(mockInstance.TokenMetaData.Nonce),
@@ -125,15 +125,15 @@ func (ae *ScenarioExecutor) convertMockAccountToScenarioFormat(account *worldmoc
 			})
 		}
 
-		scenDCT = append(scenDCT, &scenmodel.DCTData{
+		scenDCDT = append(scenDCDT, &scenmodel.DCDTData{
 			TokenIdentifier: scenmodel.JSONBytesFromString{
-				Value:    dctObj.TokenIdentifier,
-				Original: ae.exprReconstructor.Reconstruct(dctObj.TokenIdentifier, er.StrHint),
+				Value:    dcdtObj.TokenIdentifier,
+				Original: ae.exprReconstructor.Reconstruct(dcdtObj.TokenIdentifier, er.StrHint),
 			},
 			Instances: scenInstances,
 			LastNonce: scenmodel.JSONUint64{
-				Value:    dctObj.LastNonce,
-				Original: ae.exprReconstructor.ReconstructFromUint64(dctObj.LastNonce),
+				Value:    dcdtObj.LastNonce,
+				Original: ae.exprReconstructor.ReconstructFromUint64(dcdtObj.LastNonce),
 			},
 			Roles: scenRoles,
 		})
@@ -152,8 +152,8 @@ func (ae *ScenarioExecutor) convertMockAccountToScenarioFormat(account *worldmoc
 			Value:    account.Balance,
 			Original: ae.exprReconstructor.ReconstructFromBigInt(account.Balance),
 		},
-		Storage: storageKvps,
-		DCTData: scenDCT,
+		Storage:  storageKvps,
+		DCDTData: scenDCDT,
 		Owner: scenmodel.JSONBytesFromString{
 			Value:    account.OwnerAddress,
 			Original: ae.exprReconstructor.Reconstruct(account.OwnerAddress, er.AddressHint),

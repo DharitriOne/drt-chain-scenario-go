@@ -1,5 +1,5 @@
 {
-    "name": "check should fail if expected is non-zero and the actual is zero",
+    "name": "check should fail if expected 0 and the actual is non-zero",
     "steps": [
         {
             "step": "setState",
@@ -7,7 +7,7 @@
                 "address:A": {
                     "nonce": "0",
                     "balance": "0",
-                    "dct": {
+                    "dcdt": {
                         "str:TOK-123456": "150"
                     }
                 },
@@ -24,18 +24,12 @@
                 "address:A": {
                     "nonce": "0",
                     "balance": "0",
-                    "dct": {
-                        "str:TOK-123456": "150"
-                    },
                     "storage": {},
                     "code": ""
                 },
                 "address:B": {
                     "nonce": "0",
                     "balance": "0",
-                    "dct": {
-                        "str:TOK-123456": "100"
-                    },
                     "storage": {},
                     "code": ""
                 }

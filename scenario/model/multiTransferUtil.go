@@ -5,18 +5,18 @@ import (
 	txDataBuilder "github.com/DharitriOne/drt-chain-vm-common-go/txDataBuilder"
 )
 
-// CreateMultiTransferData builds data for a multiTransferDCT
-func CreateMultiTransferData(to []byte, dctData []*DCTTxData, endpointName string, arguments [][]byte) []byte {
+// CreateMultiTransferData builds data for a multiTransferDCDT
+func CreateMultiTransferData(to []byte, dcdtData []*DCDTTxData, endpointName string, arguments [][]byte) []byte {
 	multiTransferData := make([]byte, 0)
-	multiTransferData = append(multiTransferData, []byte(core.BuiltInFunctionMultiDCTNFTTransfer)...)
+	multiTransferData = append(multiTransferData, []byte(core.BuiltInFunctionMultiDCDTNFTTransfer)...)
 	tdb := txDataBuilder.NewBuilder()
 	tdb.Bytes(to)
-	tdb.Int(len(dctData))
+	tdb.Int(len(dcdtData))
 
-	for _, dctDataTransfer := range dctData {
-		tdb.Bytes(dctDataTransfer.TokenIdentifier.Value)
-		tdb.Int64(int64(dctDataTransfer.Nonce.Value))
-		tdb.BigInt(dctDataTransfer.Value.Value)
+	for _, dcdtDataTransfer := range dcdtData {
+		tdb.Bytes(dcdtDataTransfer.TokenIdentifier.Value)
+		tdb.Int64(int64(dcdtDataTransfer.Nonce.Value))
+		tdb.BigInt(dcdtDataTransfer.Value.Value)
 	}
 
 	if len(endpointName) > 0 {

@@ -25,8 +25,8 @@ func AccountsToOJ(accounts []*scenmodel.Account) oj.OJsonObject {
 		if len(account.Balance.Original) > 0 {
 			acctOJ.Put("balance", bigIntToOJ(account.Balance))
 		}
-		if len(account.DCTData) > 0 {
-			acctOJ.Put("dct", dctDataToOJ(account.DCTData))
+		if len(account.DCDTData) > 0 {
+			acctOJ.Put("dcdt", dcdtDataToOJ(account.DCDTData))
 		}
 		storageOJ := oj.NewMap()
 		for _, st := range account.Storage {
@@ -73,12 +73,12 @@ func checkAccountsToOJ(checkAccounts *scenmodel.CheckAccounts) oj.OJsonObject {
 		if !checkAccount.Balance.IsUnspecified() {
 			acctOJ.Put("balance", checkBigIntToOJ(checkAccount.Balance))
 		}
-		if checkAccount.IgnoreDCT {
-			acctOJ.Put("dct", stringToOJ("*"))
+		if checkAccount.IgnoreDCDT {
+			acctOJ.Put("dcdt", stringToOJ("*"))
 		} else {
-			if len(checkAccount.CheckDCTData) > 0 {
-				acctOJ.Put("dct", checkDCTDataToOJ(
-					checkAccount.CheckDCTData, checkAccount.MoreDCTTokensAllowed))
+			if len(checkAccount.CheckDCDTData) > 0 {
+				acctOJ.Put("dcdt", checkDCDTDataToOJ(
+					checkAccount.CheckDCDTData, checkAccount.MoreDCDTTokensAllowed))
 			}
 		}
 		if !checkAccount.Username.IsUnspecified() {

@@ -11,10 +11,10 @@ import (
 	er "github.com/DharitriOne/drt-chain-scenario-go/scenario/expression/reconstructor"
 	scenmodel "github.com/DharitriOne/drt-chain-scenario-go/scenario/model"
 	worldmock "github.com/DharitriOne/drt-chain-scenario-go/worldmock"
-	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dctconvert"
+	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dcdtconvert"
 
 	"github.com/DharitriOne/drt-chain-core-go/core"
-	"github.com/DharitriOne/drt-chain-core-go/data/dct"
+	"github.com/DharitriOne/drt-chain-core-go/data/dcdt"
 	vmcommon "github.com/DharitriOne/drt-chain-vm-common-go"
 )
 
@@ -137,7 +137,7 @@ func (ae *ScenarioExecutor) checkAccounts(baseErrMsg string, checkAccounts *scen
 			return err
 		}
 
-		err = ae.checkAccountDCT(baseErrMsg, expectedAcct, matchingAcct)
+		err = ae.checkAccountDCDT(baseErrMsg, expectedAcct, matchingAcct)
 		if err != nil {
 			return err
 		}
@@ -199,8 +199,8 @@ func (ae *ScenarioExecutor) checkAccountStorage(baseErrMsg string, expectedAcct 
 	return nil
 }
 
-func (ae *ScenarioExecutor) checkAccountDCT(baseErrMsg string, expectedAcct *scenmodel.CheckAccount, matchingAcct *worldmock.Account) error {
-	if expectedAcct.IgnoreDCT {
+func (ae *ScenarioExecutor) checkAccountDCDT(baseErrMsg string, expectedAcct *scenmodel.CheckAccount, matchingAcct *worldmock.Account) error {
+	if expectedAcct.IgnoreDCDT {
 		return nil
 	}
 
@@ -212,7 +212,7 @@ func (ae *ScenarioExecutor) checkAccountDCT(baseErrMsg string, expectedAcct *sce
 
 	accountAddress := expectedAcct.Address.Original
 	expectedTokens := getExpectedTokens(expectedAcct)
-	accountTokens, err := dctconvert.GetFullMockDCTData(matchingAcct.Storage, systemAccStorage)
+	accountTokens, err := dcdtconvert.GetFullMockDCDTData(matchingAcct.Storage, systemAccStorage)
 	if err != nil {
 		return err
 	}
@@ -229,19 +229,19 @@ func (ae *ScenarioExecutor) checkAccountDCT(baseErrMsg string, expectedAcct *sce
 		expectedToken := expectedTokens[tokenName]
 		accountToken := accountTokens[tokenName]
 		if expectedToken == nil {
-			expectedToken = &scenmodel.CheckDCTData{
+			expectedToken = &scenmodel.CheckDCDTData{
 				TokenIdentifier: scenmodel.JSONBytesFromString{
 					Value:    []byte(tokenName),
 					Original: ae.exprReconstructor.Reconstruct([]byte(tokenName), er.StrHint),
 				},
-				Instances: []*scenmodel.CheckDCTInstance{},
+				Instances: []*scenmodel.CheckDCDTInstance{},
 				LastNonce: scenmodel.JSONCheckUint64{Value: 0, Original: ""},
 				Roles:     []string{},
 			}
 		} else if accountToken == nil {
-			accountToken = &dctconvert.MockDCTData{
+			accountToken = &dcdtconvert.MockDCDTData{
 				TokenIdentifier: []byte(tokenName),
-				Instances:       []*dct.DCToken{},
+				Instances:       []*dcdt.DCDigitalToken{},
 				LastNonce:       0,
 				Roles:           [][]byte{},
 			}
@@ -258,9 +258,9 @@ func (ae *ScenarioExecutor) checkAccountDCT(baseErrMsg string, expectedAcct *sce
 	return nil
 }
 
-func getExpectedTokens(expectedAcct *scenmodel.CheckAccount) map[string]*scenmodel.CheckDCTData {
-	expectedTokens := make(map[string]*scenmodel.CheckDCTData)
-	for _, expectedTokenData := range expectedAcct.CheckDCTData {
+func getExpectedTokens(expectedAcct *scenmodel.CheckAccount) map[string]*scenmodel.CheckDCDTData {
+	expectedTokens := make(map[string]*scenmodel.CheckDCDTData)
+	for _, expectedTokenData := range expectedAcct.CheckDCDTData {
 		tokenName := expectedTokenData.TokenIdentifier.Value
 		expectedTokens[string(tokenName)] = expectedTokenData
 	}
@@ -271,8 +271,8 @@ func getExpectedTokens(expectedAcct *scenmodel.CheckAccount) map[string]*scenmod
 func (ae *ScenarioExecutor) checkTokenState(
 	accountAddress string,
 	tokenName string,
-	expectedToken *scenmodel.CheckDCTData,
-	accountToken *dctconvert.MockDCTData,
+	expectedToken *scenmodel.CheckDCDTData,
+	accountToken *dcdtconvert.MockDCDTData,
 ) []error {
 
 	var errors []error
@@ -280,7 +280,7 @@ func (ae *ScenarioExecutor) checkTokenState(
 	errors = append(errors, ae.checkTokenInstances(accountAddress, tokenName, expectedToken, accountToken)...)
 
 	if !expectedToken.LastNonce.Check(accountToken.LastNonce) {
-		errors = append(errors, fmt.Errorf("bad account DCT last nonce. Account: %s. Token: %s. Want: \"%s\". Have: %d",
+		errors = append(errors, fmt.Errorf("bad account DCDT last nonce. Account: %s. Token: %s. Want: \"%s\". Have: %d",
 			accountAddress,
 			tokenName,
 			expectedToken.LastNonce.Original,
@@ -295,15 +295,15 @@ func (ae *ScenarioExecutor) checkTokenState(
 func (ae *ScenarioExecutor) checkTokenInstances(
 	_ string,
 	tokenName string,
-	expectedToken *scenmodel.CheckDCTData,
-	accountToken *dctconvert.MockDCTData,
+	expectedToken *scenmodel.CheckDCDTData,
+	accountToken *dcdtconvert.MockDCDTData,
 ) []error {
 
 	var errors []error
 
 	allNonces := make(map[uint64]bool)
-	expectedInstances := make(map[uint64]*scenmodel.CheckDCTInstance)
-	accountInstances := make(map[uint64]*dct.DCToken)
+	expectedInstances := make(map[uint64]*scenmodel.CheckDCDTInstance)
+	accountInstances := make(map[uint64]*dcdt.DCDigitalToken)
 	for _, expectedInstance := range expectedToken.Instances {
 		nonce := expectedInstance.Nonce.Value
 		allNonces[nonce] = true
@@ -320,14 +320,14 @@ func (ae *ScenarioExecutor) checkTokenInstances(
 		accountInstance := accountInstances[nonce]
 
 		if expectedInstance == nil {
-			expectedInstance = &scenmodel.CheckDCTInstance{
+			expectedInstance = &scenmodel.CheckDCDTInstance{
 				Nonce:   scenmodel.JSONUint64{Value: nonce, Original: ""},
 				Balance: scenmodel.JSONCheckBigInt{Value: big.NewInt(0), Original: ""},
 			}
 		} else if accountInstance == nil {
-			accountInstance = &dct.DCToken{
+			accountInstance = &dcdt.DCDigitalToken{
 				Value: big.NewInt(0),
-				TokenMetaData: &dct.MetaData{
+				TokenMetaData: &dcdt.MetaData{
 					Name:  []byte(tokenName),
 					Nonce: nonce,
 				},
@@ -407,8 +407,8 @@ func (ae *ScenarioExecutor) checkTokenInstances(
 func checkTokenRoles(
 	accountAddress string,
 	tokenName string,
-	expectedToken *scenmodel.CheckDCTData,
-	accountToken *dctconvert.MockDCTData) []error {
+	expectedToken *scenmodel.CheckDCDTData,
+	accountToken *dcdtconvert.MockDCDTData) []error {
 
 	var errors []error
 
@@ -426,13 +426,13 @@ func checkTokenRoles(
 	}
 	for role := range allRoles {
 		if !expectedRoles[role] {
-			errors = append(errors, fmt.Errorf("unexpected DCT role. Account: %s. Token: %s. Role: %s",
+			errors = append(errors, fmt.Errorf("unexpected DCDT role. Account: %s. Token: %s. Role: %s",
 				accountAddress,
 				tokenName,
 				role))
 		}
 		if !accountRoles[role] {
-			errors = append(errors, fmt.Errorf("missing DCT role. Account: %s. Token: %s. Role: %s",
+			errors = append(errors, fmt.Errorf("missing DCDT role. Account: %s. Token: %s. Role: %s",
 				accountAddress,
 				tokenName,
 				role))

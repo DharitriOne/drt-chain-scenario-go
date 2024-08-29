@@ -1,29 +1,29 @@
-package dctconvert
+package dcdtconvert
 
 import (
 	"math/big"
 
 	"github.com/DharitriOne/drt-chain-core-go/core"
-	"github.com/DharitriOne/drt-chain-core-go/data/dct"
+	"github.com/DharitriOne/drt-chain-core-go/data/dcdt"
 	scenmodel "github.com/DharitriOne/drt-chain-scenario-go/scenario/model"
 	"github.com/DharitriOne/drt-chain-vm-common-go/builtInFunctions"
 )
 
-// MakeDCTUserMetadataBytes creates metadata byte slice
-func MakeDCTUserMetadataBytes(frozen bool) []byte {
-	metadata := &builtInFunctions.DCTUserMetadata{
+// MakeDCDTUserMetadataBytes creates metadata byte slice
+func MakeDCDTUserMetadataBytes(frozen bool) []byte {
+	metadata := &builtInFunctions.DCDTUserMetadata{
 		Frozen: frozen,
 	}
 
 	return metadata.ToBytes()
 }
 
-// WriteScenariosDCTToStorage writes the Scenarios DCT data to the provided storage map
-func WriteScenariosDCTToStorage(dctData []*scenmodel.DCTData, destination map[string][]byte) error {
-	for _, scenDCTData := range dctData {
-		tokenIdentifier := scenDCTData.TokenIdentifier.Value
-		isFrozen := scenDCTData.Frozen.Value > 0
-		for _, instance := range scenDCTData.Instances {
+// WriteScenariosDCDTToStorage writes the Scenarios DCDT data to the provided storage map
+func WriteScenariosDCDTToStorage(dcdtData []*scenmodel.DCDTData, destination map[string][]byte) error {
+	for _, scenDCDTData := range dcdtData {
+		tokenIdentifier := scenDCDTData.TokenIdentifier.Value
+		isFrozen := scenDCDTData.Frozen.Value > 0
+		for _, instance := range scenDCDTData.Instances {
 			tokenNonce := instance.Nonce.Value
 			tokenKey := makeTokenKey(tokenIdentifier, tokenNonce)
 			tokenBalance := instance.Balance.Value
@@ -31,11 +31,11 @@ func WriteScenariosDCTToStorage(dctData []*scenmodel.DCTData, destination map[st
 			for _, jsonUri := range instance.Uris.Values {
 				uris = append(uris, jsonUri.Value)
 			}
-			tokenData := &dct.DCToken{
+			tokenData := &dcdt.DCDigitalToken{
 				Value:      tokenBalance,
 				Type:       uint32(core.Fungible),
-				Properties: MakeDCTUserMetadataBytes(isFrozen),
-				TokenMetaData: &dct.MetaData{
+				Properties: MakeDCDTUserMetadataBytes(isFrozen),
+				TokenMetaData: &dcdt.MetaData{
 					Name:       []byte{},
 					Nonce:      tokenNonce,
 					Creator:    instance.Creator.Value,
@@ -50,11 +50,11 @@ func WriteScenariosDCTToStorage(dctData []*scenmodel.DCTData, destination map[st
 				return err
 			}
 		}
-		err := SetLastNonce(tokenIdentifier, scenDCTData.LastNonce.Value, destination)
+		err := SetLastNonce(tokenIdentifier, scenDCDTData.LastNonce.Value, destination)
 		if err != nil {
 			return err
 		}
-		err = SetTokenRolesAsStrings(tokenIdentifier, scenDCTData.Roles, destination)
+		err = SetTokenRolesAsStrings(tokenIdentifier, scenDCDTData.Roles, destination)
 		if err != nil {
 			return err
 		}
@@ -63,9 +63,9 @@ func WriteScenariosDCTToStorage(dctData []*scenmodel.DCTData, destination map[st
 	return nil
 }
 
-// SetTokenData sets the DCT information related to a token into the storage of the account.
-func setTokenDataByKey(tokenKey []byte, tokenData *dct.DCToken, destination map[string][]byte) error {
-	marshaledData, err := dctDataMarshalizer.Marshal(tokenData)
+// SetTokenData sets the DCDT information related to a token into the storage of the account.
+func setTokenDataByKey(tokenKey []byte, tokenData *dcdt.DCDigitalToken, destination map[string][]byte) error {
+	marshaledData, err := dcdtDataMarshalizer.Marshal(tokenData)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func setTokenDataByKey(tokenKey []byte, tokenData *dct.DCToken, destination map[
 }
 
 // SetTokenData sets the token data
-func SetTokenData(tokenIdentifier []byte, nonce uint64, tokenData *dct.DCToken, destination map[string][]byte) error {
+func SetTokenData(tokenIdentifier []byte, nonce uint64, tokenData *dcdt.DCDigitalToken, destination map[string][]byte) error {
 	tokenKey := makeTokenKey(tokenIdentifier, nonce)
 	return setTokenDataByKey(tokenKey, tokenData, destination)
 }
@@ -82,11 +82,11 @@ func SetTokenData(tokenIdentifier []byte, nonce uint64, tokenData *dct.DCToken, 
 // SetTokenRoles sets the specified roles to the account, corresponding to the given tokenIdentifier.
 func SetTokenRoles(tokenIdentifier []byte, roles [][]byte, destination map[string][]byte) error {
 	tokenRolesKey := makeTokenRolesKey(tokenIdentifier)
-	tokenRolesData := &dct.DCTRoles{
+	tokenRolesData := &dcdt.DCDTRoles{
 		Roles: roles,
 	}
 
-	marshaledData, err := dctDataMarshalizer.Marshal(tokenRolesData)
+	marshaledData, err := dcdtDataMarshalizer.Marshal(tokenRolesData)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func SetTokenRolesAsStrings(tokenIdentifier []byte, rolesAsStrings []string, des
 	return SetTokenRoles(tokenIdentifier, roles, destination)
 }
 
-// SetLastNonce writes the last nonce of a specified DCT into the storage.
+// SetLastNonce writes the last nonce of a specified DCDT into the storage.
 func SetLastNonce(tokenIdentifier []byte, lastNonce uint64, destination map[string][]byte) error {
 	tokenNonceKey := makeLastNonceKey(tokenIdentifier)
 	nonceBytes := big.NewInt(0).SetUint64(lastNonce).Bytes()
@@ -113,7 +113,7 @@ func SetLastNonce(tokenIdentifier []byte, lastNonce uint64, destination map[stri
 	return nil
 }
 
-// SetTokenBalance sets the DCT balance of the account, specified by the token
+// SetTokenBalance sets the DCDT balance of the account, specified by the token
 // key.
 func SetTokenBalance(tokenIdentifier []byte, nonce uint64, balance *big.Int, destination map[string][]byte) error {
 	tokenKey := makeTokenKey(tokenIdentifier, nonce)

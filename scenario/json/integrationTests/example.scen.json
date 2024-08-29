@@ -19,7 +19,7 @@
                     "update": true,
                     "nonce": "0",
                     "balance": "0xe8d4a51000",
-                    "dct": {
+                    "dcdt": {
                         "str:1-MyToken": "400,000,000,000",
                         "str:2-AnotherToken": {
                             "instances": [
@@ -76,11 +76,11 @@
                             ],
                             "lastNonce": "7",
                             "roles": [
-                                "DCTRoleLocalMint",
-                                "DCTRoleLocalBurn",
-                                "DCTRoleNFTCreate",
-                                "DCTRoleNFTAddQuantity",
-                                "DCTRoleNFTBurn"
+                                "DCDTRoleLocalMint",
+                                "DCDTRoleLocalBurn",
+                                "DCDTRoleNFTCreate",
+                                "DCDTRoleNFTAddQuantity",
+                                "DCDTRoleNFTBurn"
                             ],
                             "frozen": "false"
                         },
@@ -255,7 +255,7 @@
                 "from": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b000000000000000000000000",
                 "to": "0x1000000000000000000000000000000000000000000000000000000000000000",
                 "rewaValue": "0x00",
-                "dctValue": [
+                "dcdtValue": [
                     {
                         "tokenIdentifier": "str:MyToken",
                         "value": "250,000,000,000"
@@ -349,7 +349,7 @@
                 "from": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b000000000000000000000000",
                 "to": "0x1000000000000000000000000000000000000000000000000000000000000000",
                 "rewaValue": "1234",
-                "dctValue": [
+                "dcdtValue": [
                     {
                         "tokenIdentifier": "str:MyToken",
                         "value": "250,000,000,000"
@@ -388,7 +388,7 @@
                     "comment": "we can comment on individual account checks",
                     "nonce": "1",
                     "balance": "0xe8d4951000",
-                    "dct": {
+                    "dcdt": {
                         "str:1-MyToken": "400,000,000,000",
                         "str:2-AnotherToken": {
                             "instances": [
@@ -432,11 +432,11 @@
                             ],
                             "lastNonce": "*",
                             "roles": [
-                                "DCTRoleLocalMint",
-                                "DCTRoleLocalBurn",
-                                "DCTRoleNFTCreate",
-                                "DCTRoleNFTAddQuantity",
-                                "DCTRoleNFTBurn"
+                                "DCDTRoleLocalMint",
+                                "DCDTRoleLocalBurn",
+                                "DCDTRoleNFTCreate",
+                                "DCDTRoleNFTAddQuantity",
+                                "DCDTRoleNFTBurn"
                             ],
                             "frozen": "false"
                         },
@@ -447,7 +447,7 @@
                     "code": ""
                 },
                 "address:account_with_defaults": {
-                    "dct": "*",
+                    "dcdt": "*",
                     "storage": "*"
                 },
                 "address:smart_contract_address": {
@@ -495,11 +495,11 @@
         {
             "step": "transfer",
             "id": "multi-transfer",
-            "comment": "test DCT multi-transfer",
+            "comment": "test DCDT multi-transfer",
             "tx": {
                 "from": "address:A",
                 "to": "address:B",
-                "dctValue": [
+                "dcdtValue": [
                     {
                         "tokenIdentifier": "str:TOK-123456",
                         "value": "100"

@@ -8,7 +8,7 @@ import (
 	"math/big"
 
 	"github.com/DharitriOne/drt-chain-core-go/core"
-	"github.com/DharitriOne/drt-chain-core-go/data/dct"
+	"github.com/DharitriOne/drt-chain-core-go/data/dcdt"
 	vmcommon "github.com/DharitriOne/drt-chain-vm-common-go"
 )
 
@@ -183,8 +183,8 @@ func (b *MockWorld) ProcessBuiltInFunction(input *vmcommon.ContractCallInput) (*
 	return b.BuiltinFuncs.ProcessBuiltInFunction(input)
 }
 
-// GetDCTToken -
-func (b *MockWorld) GetDCTToken(address []byte, tokenIdentifier []byte, nonce uint64) (*dct.DCToken, error) {
+// GetDCDTToken -
+func (b *MockWorld) GetDCDTToken(address []byte, tokenIdentifier []byte, nonce uint64) (*dcdt.DCDigitalToken, error) {
 	// custom error
 	if b.Err != nil {
 		return nil, b.Err

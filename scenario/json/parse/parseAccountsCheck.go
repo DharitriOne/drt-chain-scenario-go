@@ -15,22 +15,22 @@ func (p *Parser) processCheckAccount(acctRaw oj.OJsonObject) (*scenmodel.CheckAc
 	}
 
 	acct := scenmodel.CheckAccount{
-		Comment:              "",
-		Nonce:                scenmodel.JSONCheckUint64Unspecified(),
-		Balance:              scenmodel.JSONCheckBigIntUnspecified(),
-		Username:             scenmodel.JSONCheckBytesUnspecified(),
-		ExplicitStorage:      false,
-		IgnoreStorage:        true,
-		MoreStorageAllowed:   false,
-		CheckStorage:         nil,
-		Code:                 scenmodel.JSONCheckBytesUnspecified(),
-		CodeMetadata:         scenmodel.JSONCheckBytesUnspecified(),
-		Owner:                scenmodel.JSONCheckBytesUnspecified(),
-		AsyncCallData:        scenmodel.JSONCheckBytesUnspecified(),
-		IgnoreDCT:            false,
-		MoreDCTTokensAllowed: false,
-		CheckDCTData:         nil,
-		DeveloperReward:      scenmodel.JSONCheckBigIntUnspecified(),
+		Comment:               "",
+		Nonce:                 scenmodel.JSONCheckUint64Unspecified(),
+		Balance:               scenmodel.JSONCheckBigIntUnspecified(),
+		Username:              scenmodel.JSONCheckBytesUnspecified(),
+		ExplicitStorage:       false,
+		IgnoreStorage:         true,
+		MoreStorageAllowed:    false,
+		CheckStorage:          nil,
+		Code:                  scenmodel.JSONCheckBytesUnspecified(),
+		CodeMetadata:          scenmodel.JSONCheckBytesUnspecified(),
+		Owner:                 scenmodel.JSONCheckBytesUnspecified(),
+		AsyncCallData:         scenmodel.JSONCheckBytesUnspecified(),
+		IgnoreDCDT:            false,
+		MoreDCDTTokensAllowed: false,
+		CheckDCDTData:         nil,
+		DeveloperReward:       scenmodel.JSONCheckBigIntUnspecified(),
 	}
 	var err error
 
@@ -51,27 +51,27 @@ func (p *Parser) processCheckAccount(acctRaw oj.OJsonObject) (*scenmodel.CheckAc
 			if err != nil {
 				return nil, errors.New("invalid account balance")
 			}
-		case "dct":
-			acct.IgnoreDCT = IsStar(kvp.Value)
-			if !acct.IgnoreDCT {
-				dctMap, dctOk := kvp.Value.(*oj.OJsonMap)
-				if !dctOk {
-					return nil, errors.New("invalid DCT map")
+		case "dcdt":
+			acct.IgnoreDCDT = IsStar(kvp.Value)
+			if !acct.IgnoreDCDT {
+				dcdtMap, dcdtOk := kvp.Value.(*oj.OJsonMap)
+				if !dcdtOk {
+					return nil, errors.New("invalid DCDT map")
 				}
-				for _, dctKvp := range dctMap.OrderedKV {
-					if dctKvp.Key == "+" {
-						acct.MoreDCTTokensAllowed = true
+				for _, dcdtKvp := range dcdtMap.OrderedKV {
+					if dcdtKvp.Key == "+" {
+						acct.MoreDCDTTokensAllowed = true
 					} else {
-						tokenNameStr, err := p.ExprInterpreter.InterpretString(dctKvp.Key)
+						tokenNameStr, err := p.ExprInterpreter.InterpretString(dcdtKvp.Key)
 						if err != nil {
-							return nil, fmt.Errorf("invalid dct token identifer: %w", err)
+							return nil, fmt.Errorf("invalid dcdt token identifer: %w", err)
 						}
-						tokenName := scenmodel.NewJSONBytesFromString(tokenNameStr, dctKvp.Key)
-						dctItem, err := p.processCheckDCTData(tokenName, dctKvp.Value)
+						tokenName := scenmodel.NewJSONBytesFromString(tokenNameStr, dcdtKvp.Key)
+						dcdtItem, err := p.processCheckDCDTData(tokenName, dcdtKvp.Value)
 						if err != nil {
-							return nil, fmt.Errorf("invalid dct value: %w", err)
+							return nil, fmt.Errorf("invalid dcdt value: %w", err)
 						}
-						acct.CheckDCTData = append(acct.CheckDCTData, dctItem)
+						acct.CheckDCDTData = append(acct.CheckDCDTData, dcdtItem)
 					}
 				}
 			}

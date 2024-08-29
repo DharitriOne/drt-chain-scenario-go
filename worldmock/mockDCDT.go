@@ -6,29 +6,29 @@ import (
 
 	"github.com/DharitriOne/drt-chain-core-go/core"
 	"github.com/DharitriOne/drt-chain-core-go/core/check"
-	"github.com/DharitriOne/drt-chain-core-go/data/dct"
+	"github.com/DharitriOne/drt-chain-core-go/data/dcdt"
 	"github.com/DharitriOne/drt-chain-core-go/data/vm"
 	scenmodel "github.com/DharitriOne/drt-chain-scenario-go/scenario/model"
-	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dctconvert"
+	"github.com/DharitriOne/drt-chain-scenario-go/worldmock/dcdtconvert"
 	vmcommon "github.com/DharitriOne/drt-chain-vm-common-go"
 )
 
-// GetTokenBalance returns the DCT balance of an account for the given token
+// GetTokenBalance returns the DCDT balance of an account for the given token
 // key (token keys are built from the token identifier using MakeTokenKey).
 func (bf *BuiltinFunctionsWrapper) GetTokenBalance(address []byte, tokenIdentifier []byte, nonce uint64) (*big.Int, error) {
 	account := bf.World.AcctMap.GetAccount(address)
 	if check.IfNil(account) {
 		return big.NewInt(0), nil
 	}
-	return dctconvert.GetTokenBalance(tokenIdentifier, nonce, account.Storage)
+	return dcdtconvert.GetTokenBalance(tokenIdentifier, nonce, account.Storage)
 }
 
-// GetTokenData gets the DCT information related to a token from the storage of an account
+// GetTokenData gets the DCDT information related to a token from the storage of an account
 // (token keys are built from the token identifier using MakeTokenKey).
-func (bf *BuiltinFunctionsWrapper) GetTokenData(address []byte, tokenIdentifier []byte, nonce uint64) (*dct.DCToken, error) {
+func (bf *BuiltinFunctionsWrapper) GetTokenData(address []byte, tokenIdentifier []byte, nonce uint64) (*dcdt.DCDigitalToken, error) {
 	account := bf.World.AcctMap.GetAccount(address)
 	if check.IfNil(account) {
-		return &dct.DCToken{
+		return &dcdt.DCDigitalToken{
 			Value: big.NewInt(0),
 		}, nil
 	}
@@ -40,9 +40,9 @@ func (bf *BuiltinFunctionsWrapper) GetTokenData(address []byte, tokenIdentifier 
 	return account.GetTokenData(tokenIdentifier, nonce, systemAccStorage)
 }
 
-// SetTokenData sets the DCT information related to a token from the storage of an account
+// SetTokenData sets the DCDT information related to a token from the storage of an account
 // (token keys are built from the token identifier using MakeTokenKey).
-func (bf *BuiltinFunctionsWrapper) SetTokenData(address []byte, tokenIdentifier []byte, nonce uint64, tokenData *dct.DCToken) error {
+func (bf *BuiltinFunctionsWrapper) SetTokenData(address []byte, tokenIdentifier []byte, nonce uint64, tokenData *dcdt.DCDigitalToken) error {
 	account := bf.World.AcctMap.GetAccount(address)
 	if check.IfNil(account) {
 		return nil
@@ -50,13 +50,13 @@ func (bf *BuiltinFunctionsWrapper) SetTokenData(address []byte, tokenIdentifier 
 	return account.SetTokenData(tokenIdentifier, nonce, tokenData)
 }
 
-// PerformDirectDCTTransfer calls the real DCTTransfer function immediately;
+// PerformDirectDCDTTransfer calls the real DCDTTransfer function immediately;
 // only works for in-shard transfers for now, but it will be expanded to
 // cross-shard.
 // TODO rewrite to simulate what the SCProcessor does when executing a tx with
-// data "DCTTransfer@token@value@contractfunc@contractargs..."
-// TODO this function duplicates code from host.ExecuteDCTTransfer(), must refactor
-func (bf *BuiltinFunctionsWrapper) PerformDirectDCTTransfer(
+// data "DCDTTransfer@token@value@contractfunc@contractargs..."
+// TODO this function duplicates code from host.ExecuteDCDTTransfer(), must refactor
+func (bf *BuiltinFunctionsWrapper) PerformDirectDCDTTransfer(
 	sender []byte,
 	receiver []byte,
 	token []byte,
@@ -66,7 +66,7 @@ func (bf *BuiltinFunctionsWrapper) PerformDirectDCTTransfer(
 	gasLimit uint64,
 	gasPrice uint64,
 ) (uint64, error) {
-	dctTransferInput := &vmcommon.ContractCallInput{
+	dcdtTransferInput := &vmcommon.ContractCallInput{
 		VMInput: vmcommon.VMInput{
 			CallerAddr:  sender,
 			Arguments:   make([][]byte, 0),
@@ -77,27 +77,27 @@ func (bf *BuiltinFunctionsWrapper) PerformDirectDCTTransfer(
 			GasLocked:   0,
 		},
 		RecipientAddr:     receiver,
-		Function:          core.BuiltInFunctionDCTTransfer,
+		Function:          core.BuiltInFunctionDCDTTransfer,
 		AllowInitFunction: false,
 	}
 
 	if nonce > 0 {
-		dctTransferInput.Function = core.BuiltInFunctionDCTNFTTransfer
-		dctTransferInput.RecipientAddr = dctTransferInput.CallerAddr
+		dcdtTransferInput.Function = core.BuiltInFunctionDCDTNFTTransfer
+		dcdtTransferInput.RecipientAddr = dcdtTransferInput.CallerAddr
 		nonceAsBytes := big.NewInt(0).SetUint64(nonce).Bytes()
-		dctTransferInput.Arguments = append(dctTransferInput.Arguments, token, nonceAsBytes, value.Bytes(), receiver)
+		dcdtTransferInput.Arguments = append(dcdtTransferInput.Arguments, token, nonceAsBytes, value.Bytes(), receiver)
 	} else {
-		dctTransferInput.Arguments = append(dctTransferInput.Arguments, token, value.Bytes())
+		dcdtTransferInput.Arguments = append(dcdtTransferInput.Arguments, token, value.Bytes())
 	}
 
-	vmOutput, err := bf.ProcessBuiltInFunction(dctTransferInput)
+	vmOutput, err := bf.ProcessBuiltInFunction(dcdtTransferInput)
 	if err != nil {
 		return 0, err
 	}
 
 	if vmOutput.ReturnCode != vmcommon.Ok {
 		return 0, fmt.Errorf(
-			"DCTtransfer failed: retcode = %d, msg = %s",
+			"DCDTtransfer failed: retcode = %d, msg = %s",
 			vmOutput.ReturnCode,
 			vmOutput.ReturnMessage)
 	}
@@ -105,16 +105,16 @@ func (bf *BuiltinFunctionsWrapper) PerformDirectDCTTransfer(
 	return vmOutput.GasRemaining, nil
 }
 
-// PerformDirectMultiDCTTransfer -
-func (bf *BuiltinFunctionsWrapper) PerformDirectMultiDCTTransfer(
+// PerformDirectMultiDCDTTransfer -
+func (bf *BuiltinFunctionsWrapper) PerformDirectMultiDCDTTransfer(
 	sender []byte,
 	receiver []byte,
-	dctTransfers []*scenmodel.DCTTxData,
+	dcdtTransfers []*scenmodel.DCDTTxData,
 	callType vm.CallType,
 	gasLimit uint64,
 	gasPrice uint64,
 ) (uint64, error) {
-	nrTransfers := len(dctTransfers)
+	nrTransfers := len(dcdtTransfers)
 	nrTransfersAsBytes := big.NewInt(0).SetUint64(uint64(nrTransfers)).Bytes()
 
 	multiTransferInput := &vmcommon.ContractCallInput{
@@ -128,15 +128,15 @@ func (bf *BuiltinFunctionsWrapper) PerformDirectMultiDCTTransfer(
 			GasLocked:   0,
 		},
 		RecipientAddr:     sender,
-		Function:          core.BuiltInFunctionMultiDCTNFTTransfer,
+		Function:          core.BuiltInFunctionMultiDCDTNFTTransfer,
 		AllowInitFunction: false,
 	}
 	multiTransferInput.Arguments = append(multiTransferInput.Arguments, receiver, nrTransfersAsBytes)
 
 	for i := 0; i < nrTransfers; i++ {
-		token := dctTransfers[i].TokenIdentifier.Value
-		nonceAsBytes := big.NewInt(0).SetUint64(dctTransfers[i].Nonce.Value).Bytes()
-		value := dctTransfers[i].Value.Value
+		token := dcdtTransfers[i].TokenIdentifier.Value
+		nonceAsBytes := big.NewInt(0).SetUint64(dcdtTransfers[i].Nonce.Value).Bytes()
+		value := dcdtTransfers[i].Value.Value
 
 		multiTransferInput.Arguments = append(multiTransferInput.Arguments, token, nonceAsBytes, value.Bytes())
 	}
@@ -148,7 +148,7 @@ func (bf *BuiltinFunctionsWrapper) PerformDirectMultiDCTTransfer(
 
 	if vmOutput.ReturnCode != vmcommon.Ok {
 		return 0, fmt.Errorf(
-			"MultiDCTtransfer failed: retcode = %d, msg = %s",
+			"MultiDCDTtransfer failed: retcode = %d, msg = %s",
 			vmOutput.ReturnCode,
 			vmOutput.ReturnMessage)
 	}

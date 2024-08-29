@@ -18,7 +18,7 @@ func (p *Parser) processTx(txType scenmodel.TransactionType, blrRaw oj.OJsonObje
 		Type:         txType,
 		Nonce:        scenmodel.JSONUint64Zero(),
 		REWAValue:    scenmodel.JSONBigIntZero(),
-		DCTValue:     nil,
+		DCDTValue:    nil,
 		From:         scenmodel.JSONBytesEmpty(),
 		To:           scenmodel.JSONBytesEmpty(),
 		Code:         scenmodel.JSONBytesEmpty(),
@@ -84,16 +84,16 @@ func (p *Parser) processTx(txType scenmodel.TransactionType, blrRaw oj.OJsonObje
 			if err != nil {
 				return nil, fmt.Errorf("invalid transaction rewaValue: %w", err)
 			}
-		case "dct":
+		case "dcdt":
 			// backwards compatibility
 			fallthrough
-		case "dctValue":
-			if !txType.HasDCT() {
-				return nil, errors.New("`dctValue` not allowed in this context")
+		case "dcdtValue":
+			if !txType.HasDCDT() {
+				return nil, errors.New("`dcdtValue` not allowed in this context")
 			}
-			blt.DCTValue, err = p.processTxDCT(kvp.Value)
+			blt.DCDTValue, err = p.processTxDCDT(kvp.Value)
 			if err != nil {
-				return nil, fmt.Errorf("invalid transaction dctValue: %w", err)
+				return nil, fmt.Errorf("invalid transaction dcdtValue: %w", err)
 			}
 		case "arguments":
 			blt.Arguments, err = p.parseSubTreeList(kvp.Value)

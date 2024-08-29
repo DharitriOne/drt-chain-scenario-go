@@ -37,7 +37,7 @@ func (p *Parser) processAccount(acctRaw oj.OJsonObject) (*scenmodel.Account, err
 		CodeMetadata:    scenmodel.JSONBytesEmpty(),
 		Owner:           scenmodel.JSONBytesEmpty(),
 		AsyncCallData:   "",
-		DCTData:         nil,
+		DCDTData:        nil,
 		Update:          false,
 		DeveloperReward: scenmodel.JSONBigIntZero(),
 	}
@@ -71,22 +71,22 @@ func (p *Parser) processAccount(acctRaw oj.OJsonObject) (*scenmodel.Account, err
 			if err != nil {
 				return nil, errors.New("invalid account balance")
 			}
-		case "dct":
-			dctMap, dctOk := kvp.Value.(*oj.OJsonMap)
-			if !dctOk {
-				return nil, errors.New("invalid DCT map")
+		case "dcdt":
+			dcdtMap, dcdtOk := kvp.Value.(*oj.OJsonMap)
+			if !dcdtOk {
+				return nil, errors.New("invalid DCDT map")
 			}
-			for _, dctKvp := range dctMap.OrderedKV {
-				tokenNameStr, err := p.ExprInterpreter.InterpretString(dctKvp.Key)
+			for _, dcdtKvp := range dcdtMap.OrderedKV {
+				tokenNameStr, err := p.ExprInterpreter.InterpretString(dcdtKvp.Key)
 				if err != nil {
-					return nil, fmt.Errorf("invalid dct token identifer: %w", err)
+					return nil, fmt.Errorf("invalid dcdt token identifer: %w", err)
 				}
-				tokenName := scenmodel.NewJSONBytesFromString(tokenNameStr, dctKvp.Key)
-				dctItem, err := p.processDCTData(tokenName, dctKvp.Value)
+				tokenName := scenmodel.NewJSONBytesFromString(tokenNameStr, dcdtKvp.Key)
+				dcdtItem, err := p.processDCDTData(tokenName, dcdtKvp.Value)
 				if err != nil {
-					return nil, fmt.Errorf("invalid dct value: %w", err)
+					return nil, fmt.Errorf("invalid dcdt value: %w", err)
 				}
-				acct.DCTData = append(acct.DCTData, dctItem)
+				acct.DCDTData = append(acct.DCDTData, dcdtItem)
 			}
 		case "username":
 			acct.Username, err = p.processStringAsByteArray(kvp.Value)
