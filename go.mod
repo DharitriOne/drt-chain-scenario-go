@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/DharitriOne/drt-chain-core-go v0.0.2
 	github.com/DharitriOne/drt-chain-logger-go v0.0.1
-	github.com/DharitriOne/drt-chain-vm-common-go v0.0.2
+	github.com/DharitriOne/drt-chain-vm-common-go v0.0.3
 	github.com/DharitriOne/drt-components-big-int v0.0.1
 	github.com/TwiN/go-color v1.1.0
 	github.com/stretchr/testify v1.8.1
